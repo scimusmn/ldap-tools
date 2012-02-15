@@ -45,53 +45,13 @@ class LDAPUserMgmt:
                     out = "%s: %s" % (attribute, attribute_dict[attribute])
                     print out
 
-    def unbind(self):
+    def unbind_s(self):
         self.ldap_connection.unbind_s
 
 def main():
     l = LDAPUserMgmt()
-    l.list_users(search_filter='CN=username*', attributes=['cn', 'distinguishedName'])
-    l.unbind()
+    l.list_users(search_filter='CN=bkennedy*', attributes=['cn', 'distinguishedName'])
+    l.unbind_s()
 
 if __name__ == "__main__":
     main()
-
-
-#def main():
-    #l = userLDAPMgmt
-    #l.list_users(attrib=['cn', 'mail', 'homePhone'])
-    #print ldap.__version__
-
-    #ldap.set_option(ldap.OPT_X_TLS_REQUIRE_CERT, ldap.OPT_X_TLS_NEVER)
-    #l = ldap.initialize('ldap://' + LDAP_IP)
-    #l.set_option(ldap.OPT_REFERRALS, 0)
-    #l.set_option(ldap.OPT_PROTOCOL_VERSION, 3)
-    #l.set_option(ldap.OPT_X_TLS,ldap.OPT_X_TLS_DEMAND)
-    #l.set_option( ldap.OPT_X_TLS_DEMAND, True )
-    #l.set_option( ldap.OPT_DEBUG_LEVEL, 255 )
-
-    #try:
-        ##l.start_tls_s()
-        #l.bind_s(BIND_USER, BIND_PASS)
-    #except ldap.INVALID_CREDENTIALS:
-        #print "Your username or password is incorrect."
-        #sys.exit()
-    #except ldap.LDAPError, e:
-        #if type(e.message) == dict and e.message.has_key('desc'):
-            #print e.message['desc']
-        #else:
-            #print e
-        #sys.exit()
-
-    #print "Bind worked"
-
-    #ldapsearch_str = "ldapsearch" + \
-            #" -b '" + SEARCH_SCOPE + "'" + \
-            #" -D " + "'" + BIND_USER + "'" + \
-            #" -H " + "'ldap://" + LDAP_IP + ":389'" + \
-            #" -x" + \
-            #" -w '" + BIND_PASS + "'"
-    #print ldapsearch_str
-    #output,error = (call_command(ldapsearch_str))
-    #print "output = " + output
-    #print "error = " + error
