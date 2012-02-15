@@ -39,16 +39,14 @@ class LDAPUserMgmt:
     def list_users(self, search_filter=None, attributes=None):
         results = self.ldap_connection.search_s(self.ldap_base_dn, ldap.SCOPE_SUBTREE, search_filter, attributes)
         for result in results:
-            print '\n----------Result----------\n'
-            print result[1]
-            #attribute_dict = result[1]
-            #for attribute in attributes:
-                #out = "%s: %s" % (attribute, attribute_dict[attribute])
-                #print out
+            attribute_dict = result[1]
+            for attribute in attributes:
+                if type(attribute_dict) is dict:
+                    out = "%s: %s" % (attribute, attribute_dict[attribute])
+                    print out
 
     def unbind(self):
         self.ldap_connection.unbind_s
-        print "Connection closed"
 
 def main():
     l = LDAPUserMgmt()
