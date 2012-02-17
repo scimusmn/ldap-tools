@@ -40,7 +40,7 @@ class LDAPUserMgmt:
         self.ldap_connection.set_option(ldap.OPT_REFERRALS, 0)
 
         try:
-            self.ldap_connection.simple_bind(bind_user, bind_passwd)
+            self.ldap_connection.simple_bind_s(bind_user, bind_passwd)
         except ldap.LDAPError as e:
             print ("Bind error: %s" % (e))
             sys.exit(2)
@@ -63,13 +63,7 @@ class LDAPUserMgmt:
 
 def main():
     l = LDAPUserMgmt()
-
-    # If you don't wait for a short while after the LDAP bind
-    # you will get a false 'the server is busy' error when you
-    # try to do the search.
-    time.sleep(.5)
-
-    l.list_users(search_filter='CN=bkennedy', attributes=['cn', 'distinguishedName'])
+    l.list_users(search_filter=LDAP_SEARCH_FILTER, attributes=['cn', 'distinguishedName'])
 
 if __name__ == "__main__":
     main()
