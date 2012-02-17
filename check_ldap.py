@@ -7,7 +7,7 @@ import string
 import subprocess
 import sys
 import ldap
-import ldap.sasl
+import time
 
 config = ConfigParser.ConfigParser()
 config.read("ldap.cfg")
@@ -30,28 +30,46 @@ class LDAPUserMgmt:
             bind_user = BIND_USER
         if not bind_passwd:
             bind_passwd = BIND_PASSWD
-        #self.ldap_connection = ldap.initialize(ldap_uri,trace_level=2)
-        self.ldap_connection = ldap.initialize(ldap_uri)
+
+        try:
+            self.ldap_connection = ldap.initialize(ldap_uri)
+        except:
+            print ("Connect error: %s" % (e))
+            sys.exit(1)
+
         self.ldap_connection.set_option(ldap.OPT_REFERRALS, 0)
-        self.ldap_connection.simple_bind(bind_user, bind_passwd)
+
+        try:
+            self.ldap_connection.simple_bind(bind_user, bind_passwd)
+        except ldap.LDAPError as e:
+            print ("Bind error: %s" % (e))
+            sys.exit(2)
+
         self.ldap_base_dn = ldap_base_dn
 
     def list_users(self, search_filter=None, attributes=None):
-        results = self.ldap_connection.search_s(self.ldap_base_dn, ldap.SCOPE_SUBTREE, search_filter, attributes)
-        for result in results:
-            attribute_dict = result[1]
-            for attribute in attributes:
-                if type(attribute_dict) is dict:
-                    out = "%s: %s" % (attribute, attribute_dict[attribute])
-                    print out
-
-    def unbind_s(self):
-        self.ldap_connection.unbind_s
+        try:
+            results = self.ldap_connection.search_s(self.ldap_base_dn, ldap.SCOPE_SUBTREE, search_filter, attributes)
+            for result in results:
+                attribute_dict = result[1]
+                for attribute in attributes:
+                    if type(attribute_dict) is dict:
+                        out = "%s: %s" % (attribute, attribute_dict[attribute])
+                        print out
+            self.ldap_connection.unbind()
+        except ldap.LDAPError as e:
+            print ("Search error: %s" % (e))
+            sys.exit(3)
 
 def main():
     l = LDAPUserMgmt()
-    l.list_users(search_filter='CN=bkennedy*', attributes=['cn', 'distinguishedName'])
-    l.unbind_s()
+
+    # If you don't wait for a short while after the LDAP bind
+    # you will get a false 'the server is busy' error when you
+    # try to do the search.
+    time.sleep(.5)
+
+    l.list_users(search_filter='CN=bkennedy', attributes=['cn', 'distinguishedName'])
 
 if __name__ == "__main__":
     main()
