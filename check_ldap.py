@@ -18,6 +18,7 @@ LDAP_URI = 'ldap://' + config.get("ldap", "host")
 LDAP_BASE_DN = config.get("ldap", "base_dn")
 BIND_USER = config.get("ldap", "bind_user")
 BIND_PASSWD = config.get("ldap", "bind_passwd")
+LDAP_SEARCH_FILTER = config.get("ldap", "search_filter")
 
 class LDAPUserMgmt:
 
