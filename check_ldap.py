@@ -51,16 +51,23 @@ class LDAPUserMgmt:
     def list_users(self, search_filter=None, attributes=None):
         try:
             results = self.ldap_connection.search_s(self.ldap_base_dn, ldap.SCOPE_SUBTREE, search_filter, attributes)
+            out = []
             for result in results:
                 attribute_dict = result[1]
                 for attribute in attributes:
                     if type(attribute_dict) is dict:
-                        out = "%s: %s" % (attribute, attribute_dict[attribute])
-                        print out
-            self.ldap_connection.unbind()
+                        entry = "%s: %s" % (attribute, attribute_dict[attribute])
+                        out.append(entry)
+            if len(out) == 0:
+                print 'Your search returned no results.'
+                self.ldap_connection.unbind()
+                sys.exit(3)
+            else:
+                self.ldap_connection.unbind()
+                print '\n'.join(out)
         except ldap.LDAPError as e:
             print ("Search error: %s" % (e))
-            sys.exit(3)
+            sys.exit(4)
 
 def main():
     l = LDAPUserMgmt()
