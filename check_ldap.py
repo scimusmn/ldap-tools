@@ -2,6 +2,7 @@
 
 # Script to check the status of a remote LDAP search
 
+import os
 import ConfigParser
 import string
 import subprocess
@@ -11,6 +12,7 @@ import time
 
 config = ConfigParser.ConfigParser()
 config.read("ldap.cfg")
+config.read(os.path.dirname(os.path.realpath(__file__)) + 'ldap.cfg')
 LDAP_URI = 'ldap://' + config.get("ldap", "host")
 # TODO (bkennedy): Conditionally read port if desired.
 #LDAP_PORT = config.get("ldap", "port")
